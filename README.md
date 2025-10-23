@@ -27,3 +27,4 @@ This website serves as the primary touchpoint for Helix Solutions, designed to:
 * **HTML5**
 * **CSS3** (Custom Properties, Flexbox, Grid)
 * **JavaScript (ES6+)** (for animations, theme toggle, and the mobile menu)
+
