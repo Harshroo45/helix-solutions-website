@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helix Solutions - The OS for Remote Work AI</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- 1. Global Setup & Variables --- */
+        :root {
+            /* Monochrome palette with single accent */
+            --color-accent: #00e0c6; /* Bright Teal */
+            --color-white: #ffffff;
+            --color-light-bg: #f8f9fa; /* Light mode bg */
+            --color-dark-bg: #0A0A0A; /* Near Black */
+            --color-dark-card: #111111; /* Dark Gray Card */
+            --color-light-text: #eaeaea;
+            --color-muted-text: #888888;
+            --border-dark: #222222;
+
+            --font-family-main: 'Poppins', sans-serif;
+            --shadow-light: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            --shadow-dark: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-family-main);
+            background-color: var(--color-dark-bg);
+            color: var(--color-light-text);
+            transition: var(--transition);
+            line-height: 1.7;
+            overflow-x: hidden;
+            
+            /* Subtle dot grid background from reference */
+            background-image: radial-gradient(var(--border-dark) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        html { /* Added */
+            overflow-x: hidden;
+        }
+
+        /* --- 2. Dark/Light Mode (Simplified) --- */
+        /* This version is dark-mode first, but toggle is still functional */
+        body.light-mode {
+            background-color: var(--color-light-bg);
+            color: #111;
+            background-image: radial-gradient(#eee 1px, transparent 1px);
+        }
+        
+        body.light-mode .solid-card {
+            background-color: var(--color-white);
+            border-color: #eee;
+        }
+        
+        body.light-mode p { color: #555; }
+        body.light-mode .logo,
+        body.light-mode .menu-btn,
+        body.light-mode #theme-toggle {
+            color: var(--color-dark-bg);
+        }
+        body.light-mode .nav-links { background-color: var(--color-light-bg); }
+        body.light-mode .nav-links a { color: var(--color-dark-bg); }
+        body.light-mode .nav-close-btn { color: var(--color-dark-bg); }
+        body.light-mode #theme-toggle { color: var(--color-dark-bg); } /* Added */
+
+        /* --- 3. Reusable Components --- */
+        .container {
+            max-width: 1100px; /* Tighter container for elegant feel */
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 7rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            line-height: 1.3;
+        }
+
+        h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -1px; }
+        h2 { font-size: 2.8rem; text-align: center; margin-bottom: 4rem; }
+        h3 { font-size: 1.75rem; }
+        p { color: var(--color-muted-text); }
+        
+        /* NEW: Solid Card Style (Replaces Glass) */
+        .solid-card {
+            background-color: var(--color-dark-card);
+            border: 1px solid var(--border-dark);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            transition: var(--transition);
+        }
+        
+        .solid-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 15px rgba(0, 224, 198, 0.2); /* Added glow effect */
+        }
+
+        /* NEW: Simplified Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: var(--color-dark-bg); /* High contrast */
+            box-shadow: 0 4px 15px rgba(0, 224, 198, 0.1);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-white);
+            color: var(--color-dark-bg);
+            box-shadow: 0 6px 25px rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--border-dark);
+            color: var(--color-light-text);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        /* --- 4. Header & Navigation (Total Redesign) --- */
+        #main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem 0; /* More padding */
+            z-index: 1000;
+            transition: var(--transition);
+        }
+        
+        #main-header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1300px; /* Wider nav container */
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-white);
+            text-decoration: none;
+            letter-spacing: -1px;
+            z-index: 1001;
+        }
+
+        /* NEW: Header controls wrapper */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1001;
+        }
+
+        .menu-btn {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-white);
+            cursor: pointer;
+            /* z-index: 1001; */ /* Removed */
+            padding: 0.5rem 1.2rem; /* Adjusted */
+            border: 1px solid var(--border-dark);
+            border-radius: 50px;
+            transition: var(--transition);
+            display: flex; /* Added */
+            align-items: center; /* Added */
+        }
+        
+        .menu-btn:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        /* Full-screen Overlay Menu */
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            
+            position: fixed;
+            top: 0;
+            left: -100%; /* Start off-screen */
+            width: 100%;
+            height: 100vh;
+            
+            background: var(--color-dark-bg);
+            transition: left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1000;
+        }
+        
+        body.nav-open .nav-links {
+            left: 0;
+        }
+        
+        body.nav-open {
+            overflow: hidden; /* Prevent scrolling when menu is open */
+        }
+
+        .nav-links li {
+            margin: 1.5rem 0; /* Reduced margin */
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--color-white);
+            font-weight: 500;
+            font-size: 2.2rem; /* Slightly smaller */
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--color-accent);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-close-btn {
+            /* position: absolute; */ /* Removed */
+            /* top: 2.5rem; */ /* Removed */
+            /* right: 2rem; */ /* Removed */
+            font-size: 2.5rem;
+            color: var(--color-white);
+            cursor: pointer;
+            /* z-index: 1002; */ /* Removed */
+            list-style: none; /* Added */
+            padding-left: 1.5rem; /* Added */
+        }
+
+        #theme-toggle {
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--color-white);
+            /* margin-top: 3rem; */ /* Removed */
+            /* z-index: 1001; */ /* Removed */
+            /* list-style: none; */ /* Removed */
+            padding: 0.5rem 0.9rem; /* Added */
+            border: 1px solid var(--border-dark); /* Added */
+            border-radius: 50px; /* Added */
+            display: flex; /* Added */
+            align-items: center; /* Added */
+            justify-content: center; /* Added */
+            transition: var(--transition); /* Added */
+        }
+        
+        #theme-toggle:hover {
+            border-color: var(--color-accent); /* Added */
+            color: var(--color-accent); /* Added */
+        }
+
+        /* NEW wrapper for close and theme */
+        .nav-top-right {
+            position: absolute;
+            top: 2.5rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            z-index: 1002;
+        }
+
+        /* --- 5. Hero Section (Total Redesign) --- */
+        #hero {
+            height: 100vh;
+            min-height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            padding: 0 2rem;
+        }
+        
+        /* Removed animated-bg */
+
+        /* NEW: Hero fade-in animations */
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hero-content h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--color-white);
+        }
+        
+        .hero-content h1 span {
+            color: var(--color-accent); /* Accent color */
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--color-muted-text);
+            font-weight: 300;
+            animation: heroFadeIn 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.5s forwards; /* Added */
+            opacity: 0; /* Added */
+        }
+        
+        .hero-content h1 {
+            animation: heroFadeIn 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.2s forwards; /* Added */
+            opacity: 0; /* Added */
+        }
+
+        .hero-content .btn {
+            animation: heroFadeIn 1s cubic-bezier(0.25, 0.8, 0.25, 1) 0.8s forwards; /* Added */
+            opacity: 0; /* Added */
+        }
+        
+        .hero-content .btn-secondary {
+            color: var(--color-white);
+            border-color: var(--border-dark);
+            margin-left: 1rem;
+        }
+        
+        .hero-content .btn-secondary:hover {
+            color: var(--color-accent);
+            border-color: var(--color-accent);
+        }
+
+        /* NEW: Scroll down indicator */
+        .scroll-down {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--color-muted-text);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            animation: heroFadeIn 1s 1.2s forwards;
+        }
+        
+        .scroll-down span {
+            margin-bottom: 0.5rem;
+        }
+        
+        .scroll-down .scroll-arrow {
+            width: 1px;
+            height: 30px;
+            background: var(--color-muted-text);
+            animation: scrollPulse 2s infinite cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        @keyframes scrollPulse {
+            0% { transform: scaleY(0); transform-origin: top; }
+            50% { transform: scaleY(1); transform-origin: top; }
+            51% { transform: scaleY(1); transform-origin: bottom; }
+            100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+
+
+        /* --- 6. Trusted By Section --- */
+        #partners {
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }
+        
+        #partners h4 {
+            text-align: center;
+            font-weight: 500;
+            color: var(--color-muted-text);
+            margin-bottom: 2.5rem;
+        }
+        
+        .partner-logos {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            filter: grayscale(100%) opacity(0.6) invert(1); /* Increased opacity */
+        }
+        
+        .partner-logos i {
+            font-size: 2.5rem;
+            color: var(--color-dark-text);
+        }
+        
+        body.light-mode .partner-logos {
+            filter: grayscale(100%) opacity(0.8); /* Increased opacity */
+        }
+
+        /* --- 7. About Section --- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .about-content h3 {
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+        
+        .about-image-wrapper {
+            position: relative;
+        }
+
+        .about-image-wrapper img {
+            width: 100%;
+            border-radius: 1.5rem;
+            position: relative;
+            border: 1px solid var(--border-dark);
+        }
+        
+        /* Removed stats for minimalism */
+
+        /* --- 8. Platform (Services) Section --- */
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .platform-card {
+             /* Use solid-card class */
+        }
+        
+        .platform-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-accent);
+        }
+        
+        .platform-card h3 { font-size: 1.5rem; }
+        .platform-card.main-platform { grid-column: 1 / 3; }
+        .platform-card.secondary-1 { grid-column: 3 / 4; }
+        .platform-card.secondary-2 { grid-column: 1 / 2; }
+        .platform-card.secondary-3 { grid-column: 2 / 4; }
+
+        /* --- 9. News & Blog Section --- */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        
+        .blog-card {
+            /* Use solid-card class, but need to remove padding */
+            padding: 0; 
+            overflow: hidden; /* For image */
+        }
+        
+        .blog-card-image {
+            height: 220px;
+            overflow: hidden;
+        }
+        
+        .blog-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        
+        .blog-card:hover .blog-card-image img {
+            transform: scale(1.05);
+        }
+        
+        .blog-card-content {
+            padding: 1.5rem;
+        }
+        
+        .blog-card-content .tag {
+            display: inline-block;
+            background: var(--color-accent);
+            color: var(--color-dark-bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .blog-card-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .blog-read-more {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--color-accent);
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        .blog-read-more i {
+            margin-left: 0.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .blog-card:hover .blog-read-more i {
+            transform: translateX(5px);
+        }
+
+        /* --- 10. Careers Section --- */
+        .career-list {
+            max-width: 900px;
+            margin: 0 auto;
+             /* Use solid-card class */
+        }
+        
+        .career-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-dark);
+            transition: var(--transition);
+        }
+        
+        .career-item:last-child { border-bottom: none; }
+        
+        .career-item h3 { margin-bottom: 0.25rem; font-size: 1.25rem; }
+        
+        .career-item .btn {
+            opacity: 0;
+            transform: translateX(10px);
+            transition: var(--transition);
+            flex-shrink: 0;
+            padding: 0.6rem 1.5rem;
+        }
+        
+        .career-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .career-item:hover .btn {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* --- 11. Contact Section --- */
+        .contact-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* NEW: Form grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .form-group { margin-bottom: 1.5rem; }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-family: var(--font-family-main);
+            background: var(--color-dark-card);
+            border: 1px solid var(--border-dark);
+            transition: var(--transition);
+            color: var(--color-light-text);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            background: var(--color-dark-bg);
+        }
+
+        .contact-wrapper .btn-primary { width: 100%; font-size: 1.1rem; padding: 1rem; }
+        
+        .social-links { text-align: center; margin-top: 3rem; }
+        .social-links a { font-size: 1.8rem; margin: 0 1.2rem; color: var(--color-muted-text); transition: var(--transition); }
+        .social-links a:hover { color: var(--color-accent); transform: translateY(-5px); }
+
+        /* --- 12. Footer --- */
+        footer {
+            background-color: transparent;
+            color: var(--color-muted-text);
+            padding: 5rem 0 3rem 0;
+            margin-top: 5rem;
+            text-align: center;
+            border-top: 1px solid var(--border-dark);
+        }
+        
+        .footer-links { list-style: none; display: flex; justify-content: center; gap: 2.5rem; margin-bottom: 2rem; }
+        .footer-links a { color: var(--color-muted-text); text-decoration: none; font-size: 0.95rem; }
+        .footer-links a:hover { color: var(--color-accent); }
+        
+        /* --- 13. Scroll Animations --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 1s cubic-bezier(0.5, 0, 0, 1), transform 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- 14. Responsiveness --- */
+        @media (max-width: 992px) {
+            h1 { font-size: 3rem; }
+            .hero-content h1 { font-size: 3.2rem; }
+            
+            .about-grid { grid-template-columns: 1fr; }
+            .about-image-wrapper { grid-row: 1; margin-bottom: 2rem; }
+            
+            .platform-grid { grid-template-columns: 1fr 1fr; }
+            .platform-card.main-platform { grid-column: 1 / 3; }
+            .platform-card.secondary-1 { grid-column: 1 / 2; }
+            .platform-card.secondary-2 { grid-column: 2 / 3; }
+            .platform-card.secondary-3 { grid-column: 1 / 3; }
+        }
+        
+        @media (max-width: 768px) {
+            html { font-size: 15px; }
+            section { padding: 5rem 0; }
+            
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+            
+            .hero-content p { /* Added */
+                font-size: 1.1rem;
+            }
+            
+            .nav-links a {
+                font-size: 1.8rem; /* Adjusted */
+            }
+            
+            .nav-links li { /* Added */
+                margin: 1.2rem 0;
+            }
+            
+            .nav-top-right { /* Added */
+                top: 1.5rem;
+                right: 1.5rem;
+            }
+            
+            .platform-grid { grid-template-columns: 1fr; }
+            .platform-card { grid-column: 1 / 2 !important; grid-row: auto !important; }
+            
+            /* NEW: Stack form fields on mobile */
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .header-controls { /* Added */
+                gap: 0.5rem;
+            }
+            
+            .menu-btn { /* Added */
+                padding: 0.5rem 0.8rem;
+            }
+            
+            #theme-toggle { /* Added */
+                padding: 0.5rem 0.8rem;
+            }
+            
+            .career-item { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+            .career-item .btn { opacity: 1; transform: translateX(0); width: 100%; text-align: center; }
+        }
+
+        @media (max-width: 380px) { /* Added new query */
+            .menu-btn span {
+                display: none;
+            }
+            .menu-btn {
+                padding: 0.5rem 0.9rem; /* Make it squarer */
+            }
+            .hero-content h1 {
+                font-size: 2.5rem; /* Further reduce hero title */
+            }
+        }
+
+    </style>
+</head>
+<body class="dark-mode"> <!-- Start in dark mode -->
+
+    <!-- 1. Header & Navigation -->
+    <header id="main-header">
+        <nav class="container">
+            <a href="#" class="logo">Helix AI Solutions</a>
+            
+            <!-- Full-screen Overlay Menu -->
+            <ul class="nav-links" id="nav-menu">
+                <div class="nav-top-right"> <!-- New wrapper -->
+                    <!-- Theme toggle removed from here -->
+                    <li class="nav-close-btn" id="menu-close">&times;</li>
+                </div>
+                <li><a href="#about">About</a></li>
+                <li><a href="#platform">Platform</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#careers">Careers</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <!-- Theme toggle moved up -->
+            </ul>
+            
+            <!-- NEW Header Controls Wrapper -->
+            <div class="header-controls">
+                <div id="theme-toggle" title="Toggle Theme"> <!-- Changed from li to div -->
+                    <i class="fa-solid fa-moon" id="theme-icon"></i>
+                </div>
+                <div class="menu-btn" id="menu-toggle">
+                    <i class="fa-solid fa-bars" style="margin-right: 8px;"></i><span>Menu</span> <!-- Added span -->
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+
+        <!-- 2. Hero Section -->
+        <section id="hero">
+            <div class="container">
+                <div class="hero-content reveal">
+                    <h1>The OS for<br><span>Remote Work AI</span></h1>
+                    <p>Helix Solutions is the intelligent layer that connects your tools, automates your workflows, and predicts your team's needs. Stop managing. Start innovating.</p>
+                    <a href="#platform" class="btn btn-primary">Explore Platform</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" class="btn btn-secondary">Book a Demo</a>
+                </div>
+            </div>
+            <!-- NEW Scroll Down Indicator -->
+            <div class="scroll-down">
+                <span>Scroll</span>
+                <div class="scroll-arrow"></div>
+            </div>
+        </section>
+        
+        <!-- 3. Trusted By Section -->
+        <section id="partners" class="reveal">
+            <div class="container">
+                <h4>TRUSTED BY LEADING REMOTE TEAMS & INVESTORS</h4>
+                <div class="partner-logos">
+                    <i class="fa-brands fa-github"></i>
+                    <i class="fa-brands fa-slack"></i>
+                    <i class="fa-brands fa-figma"></i>
+                    <i class="fa-brands fa-wordpress-simple"></i>
+                    <i class="fa-brands fa-react"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. About & Stats Section -->
+        <section id="about">
+            <div class="container reveal">
+                <div class="about-grid">
+                    <div class="about-content">
+                        <h2>Human-Centered AI</h2>
+                        <h3>Our Mission</h3>
+                        <p>We're not just building automation. We're building the framework for a new, more efficient, and more human way of working. Our mission is to eliminate digital friction and burnout, allowing your team to focus on what truly matters.</p>
+                        <br>
+                        <p>Founded by AI researchers and remote work advocates, Helix Solutions was born from a passion for solving the real-world challenges of distributed teams.</p>
+                    </div>
+                    <div class="about-image-wrapper">
+                        <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Helix Solutions Team Collaborating">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 5. Platform (Services) Section -->
+        <section id="platform">
+            <div class="container reveal">
+                <h2>The Helix Platform</h2>
+                <div class="platform-grid">
+                    <div class="platform-card solid-card main-platform">
+                        <div class="icon"><i class="fa-solid fa-robot"></i></div>
+                        <h3>'Nexus' AI Agent</h3>
+                        <p>Our flagship AI agent, 'Nexus', integrates with all your tools (Slack, Jira, Figma, etc.) to automate tasks, summarize meetings, draft reports, and manage projects autonomously.</p>
+                    </div>
+                    <div class="platform-card solid-card secondary-1">
+                        <div class="icon"><i class="fa-solid fa-microchip"></i></div>
+                        <h3>Custom Models</h3>
+                        <p>Train your own models on your company data for secure, hyper-specific AI solutions.</p>
+                    </div>
+                    <div class="platform-card solid-card secondary-2">
+                        <div class="icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <h3>Predictive Insights</h3>
+                        <p>Identify team burnout risks and project bottlenecks *before* they happen.</p>
+                    </div>
+                    <div class="platform-card solid-card secondary-3">
+                        <div class="icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <h3>AI Security & Compliance</h3>
+                        <p>Enterprise-grade security and on-prem deployment options to keep your data 100% private.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 6. News & Blog Section -->
+        <section id="blog">
+            <div class="container reveal">
+                <h2>News & Insights</h2>
+                <div class="blog-grid">
+                    <!-- Blog Post 1 -->
+                    <div class="blog-card solid-card">
+                        <div class="blog-card-image">
+                            <img src="https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Office building and charts">
+                        </div>
+                        <div class="blog-card-content">
+                            <span class="tag">Funding</span>
+                            <h3>Helix Solutions Secures $15M Series A to Revolutionize Remote Work</h3>
+                            <p>We're thrilled to announce our Series A round, led by TechStar Ventures, to scale our AI platform globally.</p>
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" class="blog-read-more">
+                                <span>Read More</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Blog Post 2 -->
+                    <div class="blog-card solid-card">
+                        <div class="blog-card-image">
+                            <img src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Woman coding">
+                        </div>
+                        <div class="blog-card-content">
+                            <span class="tag">Product</span>
+                            <h3>The Future is Generative: Introducing the 'Nexus' AI Agent</h3>
+                            <p>Our new generative AI agent is more than a chatbot. It's an autonomous team member. Here's how it works.</p>
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" class="blog-read-more">
+                                <span>Read More</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Blog Post 3 -->
+                    <div class="blog-card solid-card">
+                        <div class="blog-card-image">
+                            <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Team meeting">
+                        </div>
+                        <div class="blog-card-content">
+                            <span class="tag">Case Study</span>
+                            <h3>How 'Acme Inc' 10x'd Developer Productivity with Helix</h3>
+                            <p>A deep dive into how our platform eliminated 80% of administrative overhead for a 500-person engineering team.</p>
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" class="blog-read-more">
+                                <span>Read More</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Careers Section -->
+        <section id="careers">
+            <div class="container reveal">
+                <h2>Join Our Mission</h2>
+                <p style="text-align: center; max-width: 600px; margin: -3rem auto 3rem auto;">We are building the future of work. We're looking for passionate, first-principles thinkers to join us from anywhere in the world.</p>
+                <div class="career-list solid-card">
+                    <div class="career-item">
+                        <div>
+                            <h3>Senior AI Engineer (NLP)</h3>
+                            <p>Remote (Global) / Full-Time</p>
+                        </div>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" class="btn btn-primary">Apply Now</a>
+                    </div>
+                    <div class="career-item">
+                        <div>
+                            <h3>Product Manager - AI Agents</h3>
+                            <p>Remote (US/EU) / Full-Time</p>
+                        </div>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" class="btn btn-primary">Apply Now</a>
+                    </div>
+                    <div class="career-item">
+                        <div>
+                            <h3>Principal Software Engineer (Platform)</h3>
+                            <p>Remote (Global) / Full-Time</p>
+                        </div>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" class="btn btn-primary">Apply Now</a>
+                    </div>
+                    <!-- NEW Job 4 -->
+                    <div class="career-item">
+                        <div>
+                            <h3>UX/UI Designer (AI Products)</h3>
+                            <p>Remote (US/EU) / Full-Time</p>
+                        </div>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" class="btn btn-primary">Apply Now</a>
+                    </div>
+                    <!-- NEW Job 5 -->
+                    <div class="career-item">
+                        <div>
+                            <h3>Data Scientist (Remote Ops)</h3>
+                            <p>Remote (Global) / Part-Time</p>
+                        </div>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" class="btn btn-primary">Apply Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. Contact Section -->
+        <section id="contact">
+            <div class="container reveal">
+                <h2>Get in Touch</h2>
+                <p style="text-align: center; max-width: 600px; margin: -3rem auto 3rem auto;">Let's talk about how Helix can transform your team's productivity. Book a demo or send us a message.</p>
+                
+                <form class="contact-wrapper solid-card">
+                    <div class="form-grid"> <!-- NEW grid -->
+                        <div class="form-group"> <input type="text" name="name" placeholder="Your Name" required> </div>
+                        <div class="form-group"> <input type="email" name="email" placeholder="Work Email" required> </div>
+                    </div> <!-- END grid -->
+                    <div class="form-grid"> <!-- NEW grid -->
+                        <div class="form-group"> <input type="text" name="company" placeholder="Company Name (Optional)"> </div>
+                        <div class="form-group"> <input type="tel" name="phone" placeholder="Phone (Optional)"> </div>
+                    </div> <!-- END grid -->
+                    <div class="form-group"> <textarea name="message" rows="6" placeholder="Your Message" required></textarea> </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+
+                <div class="social-links">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdM7bs7qAr7elIAM4Mpxl8spA2EZrz0Aztxdkm7ne4cpR1hqw/viewform" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 9. Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#platform">Platform</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#careers">Careers</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+            </ul>
+            <p>&copy; 2025 Helix Solutions Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+
+            // --- 1. Full-screen Menu Toggle ---
+            const menuToggle = document.getElementById('menu-toggle');
+            const menuClose = document.getElementById('menu-close');
+            const navMenu = document.getElementById('nav-menu');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            menuToggle.addEventListener('click', () => {
+                body.classList.add('nav-open');
+            });
+            
+            menuClose.addEventListener('click', () => {
+                body.classList.remove('nav-open');
+            });
+            
+            // Close menu when a link is clicked
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    body.classList.remove('nav-open');
+                });
+            });
+
+
+            // --- 2. Dark Mode Toggle ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            
+            function setTheme(isDark) {
+                if (isDark) {
+                    body.classList.remove('light-mode');
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    body.classList.add('light-mode');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+
+            themeToggle.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent menu from closing
+                setTheme(body.classList.contains('light-mode')); // Toggle
+            });
+
+            const savedTheme = localStorage.getItem('theme');
+            // Default to dark mode as per user's <body class="dark-mode">
+            if (savedTheme === 'light') {
+                setTheme(false); 
+            } else {
+                setTheme(true); // Default to dark
+            }
+
+            // --- 3. Scroll Reveal Animation ---
+            const revealElements = document.querySelectorAll('.reveal');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            revealElements.forEach(el => {
+                observer.observe(el);
+            });
+            
+            // --- 4. Removed AI Code Typing Animation ---
+            // This section is now clean.
+
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
